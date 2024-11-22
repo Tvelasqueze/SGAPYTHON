@@ -287,8 +287,9 @@ class Profesor:
         self.materias = []
 
     def asignar_materia(self, materia):
-        self.materias.append(materia)
-        materia.asignar_profesor(self)
+        if materia not in self.materias:
+            self.materias.append(materia)
+            materia.profesor = self
 
     def promedio_calificaciones(self):
         calificaciones = []
