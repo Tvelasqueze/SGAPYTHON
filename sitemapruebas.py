@@ -42,15 +42,6 @@ class Estudiante:
             raise MateriaNoEncontradaError(f"La materia ID '{id_materia}' no está inscrita para este estudiante.")
         self.calificaciones[id_materia] = calificacion
 
-    def cancelar_materia(self, id_materia):
-        for materia in self.materias:
-            if materia.id_materia == id_materia:
-                self.materias.remove(materia)
-                self.calificaciones[materia.id_materia] = 0
-                materia.calificaciones[self.id_estudiante] = 0
-                materia.estudiantes_inscritos.remove(self)
-                return f"Materia '{materia.nombre}' cancelada para el estudiante '{self.nombre} {self.apellido}'."
-        raise MateriaNoEncontradaError(f"La materia ID '{id_materia}' no está inscrita para este estudiante.")
 
     def promedio_calificaciones(self):
         if not self.calificaciones:
@@ -164,14 +155,6 @@ class GestionAcademica:
         except CalificacionInvalidaError as e:
             print(f"Error: {e}")
 
-    def cancelar_materia(self):
-        estudiante = self.listar_estudiantes()
-        materia = self.listar_materias()
-        try:
-            mensaje = estudiante.cancelar_materia(materia.id_materia)
-            print(mensaje)
-        except MateriaNoEncontradaError as e:
-            print(f"Error: {e}")
 
     def asignar_materia_a_profesor(self):
         profesor = self.listar_profesores()
@@ -270,6 +253,7 @@ class Materia:
                     f"Conflicto de horario entre '{self.nombre}' y '{materia.nombre}' en el día {self.horario.dia}."
                 )
         self.estudiantes_inscritos.append(estudiante)
+        self.cupos -= 1 
         estudiante.materias.append(self)
 
     def asignar_profesor(self, profesor):
